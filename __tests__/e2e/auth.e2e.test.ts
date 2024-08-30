@@ -25,7 +25,7 @@ describe('users', () => {
             .expect(201)
 
         const loginSuccess = await req
-            .post(SETTINGS.PATH.LOGIN)
+            .post(SETTINGS.PATH.AUTH + '/login')
             .send(mockLoginData(1))
             .expect(200)
         expect(loginSuccess.status).toBe(200)

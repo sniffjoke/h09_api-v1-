@@ -123,7 +123,7 @@ export const testCreateComment = async (n: number, newUser: any, postId: string,
 
 export const login = async (loginOrEmail: string, password: string) => {
     const loginData = await req
-        .post(SETTINGS.PATH.LOGIN)
+        .post(SETTINGS.PATH.AUTH + '/login')
         .send({loginOrEmail, password})
         .expect(200)
     return {

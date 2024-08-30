@@ -10,6 +10,7 @@ import authRoutes from "./routes/authRoutes";
 import commentsRoutes from "./routes/commentsRoutes";
 import {errorCustomApiMiddleware} from "./middlewares/errorApiMiddleware";
 import cookieParser from "cookie-parser"
+import devicesRoutes from "./routes/devicesRoutes";
 
 connectToDB()
 
@@ -31,5 +32,6 @@ app.use(SETTINGS.PATH.POSTS + '/comments', postsRoutes)
 app.use(SETTINGS.PATH.COMMENTS, commentsRoutes)
 app.use(SETTINGS.PATH.USERS, usersRoutes)
 app.use(SETTINGS.PATH.AUTH, authRoutes)
+app.use(SETTINGS.PATH.SECURITY + '/devices', devicesRoutes)
 app.use(SETTINGS.PATH.TESTING, testingRoutes)
 app.use(errorCustomApiMiddleware)

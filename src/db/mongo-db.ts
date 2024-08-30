@@ -5,6 +5,7 @@ import {Post} from "../types/posts.interface";
 import {IComment} from "../types/comments.interface";
 import {User} from "../types/users.interface";
 import {RTokenDB} from "../types/tokens.interface";
+import {IDevice} from "../types/devices.interface";
 
 export const client: MongoClient = new MongoClient(SETTINGS.PATH.MONGODB as string) as MongoClient;
 export const db: Db = client.db(SETTINGS.VARIABLES.DB_NAME);
@@ -15,6 +16,7 @@ export const postCollection: Collection<Post> = db.collection<Post>(SETTINGS.VAR
 export const userCollection: Collection<User> = db.collection<User>(SETTINGS.VARIABLES.USER_COLLECTION_NAME)
 export const commentCollection: Collection<IComment> = db.collection<IComment>(SETTINGS.VARIABLES.COMMENT_COLLECTION_NAME)
 export const tokenCollection: Collection<RTokenDB> = db.collection<RTokenDB>(SETTINGS.VARIABLES.TOKEN_COLLECTION_NAME)
+export const deviceCollection: Collection<IDevice> = db.collection<IDevice>(SETTINGS.VARIABLES.DEVICE_COLLECTION_NAME)
 
 // проверка подключения к бд
 export const connectToDB = async () => {
