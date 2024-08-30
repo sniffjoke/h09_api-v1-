@@ -24,4 +24,5 @@ export const deleteAllDevicesController = async (req: Request, res: Response) =>
     } catch (e) {
         res.status(500).send(e)
     }
+
 }
