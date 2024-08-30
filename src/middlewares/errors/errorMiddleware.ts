@@ -1,8 +1,8 @@
     import {validationResult} from "express-validator";
 import {Request, Response, NextFunction} from "express";
-import {BlogDBType} from "../dtos/blogs.dto";
-import {PostDBType} from "../dtos/posts.dto";
-import {UserDBType} from "../dtos/users.dto";
+import {BlogDBType} from "../../dtos/blogs.dto";
+import {PostDBType} from "../../dtos/posts.dto";
+import {UserDBType} from "../../dtos/users.dto";
 
 export type FieldNamesType = keyof BlogDBType | keyof PostDBType | keyof UserDBType
 export type OutputErrorsType = {

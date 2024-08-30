@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from "express";
-import {ApiError} from "../exceptions/api.error";
-import {tokenService} from "../services/token.service";
+import {ApiError} from "../../exceptions/api.error";
+import {tokenService} from "../../services/token.service";
 
 export const authMiddlewareWithBearer = (req: Request, res: Response, next: NextFunction) => {
     let token = req.headers.authorization as string
@@ -19,6 +19,6 @@ export const authMiddlewareWithBearer = (req: Request, res: Response, next: Next
         }
         next()
     } catch (e) {
-        return next(ApiError.AnyUnauthorizedError(token))
+        return next(ApiError.UnauthorizedError())
     }
 }

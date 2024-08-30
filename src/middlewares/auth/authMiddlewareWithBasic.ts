@@ -1,7 +1,7 @@
 import {Request, Response, NextFunction} from "express";
 import * as jwt from "jsonwebtoken";
-import {SETTINGS} from "../settings";
-import {ApiError} from "../exceptions/api.error";
+import {SETTINGS} from "../../settings";
+import {ApiError} from "../../exceptions/api.error";
 
 export const authMiddlewareWithBasic = (req: Request, res: Response, next: NextFunction) => {
     let token

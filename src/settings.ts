@@ -23,6 +23,7 @@ export const SETTINGS = {
         COMMENT_COLLECTION_NAME: 'comments',
         TOKEN_COLLECTION_NAME: 'tokens',
         DEVICE_COLLECTION_NAME: 'devices',
+        RATE_LIMIT_COLLECTION_NAME: 'devices',
         ADMIN: process.env.ADMIN || 'admin:qwerty',
         JWT_SECRET_ACCESS_TOKEN: process.env.JWT_SECRET_ACCESS,
         JWT_SECRET_REFRESH_TOKEN: process.env.JWT_SECRET_REFRESH,

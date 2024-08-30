@@ -123,7 +123,8 @@ export const authService = {
             user = await usersRepository.getUserByEmail(userLoginOrEmail)
         }
         if (!user) {
-            throw ApiError.BadRequest('Пользователь не найден', 'loginOrEmail')
+            // throw ApiError.BadRequest('Пользователь не найден', 'loginOrEmail')
+            throw ApiError.UnauthorizedError()
         }
         return user
     },

@@ -1,13 +1,13 @@
 import {body, param} from "express-validator";
 import {ObjectId} from "mongodb";
-import {commentsQueryRepository} from "../queryRepositories/commentsQueryRepository";
-import {commentCollection} from "../db/mongo-db";
+import {blogsQueryRepository} from "../../queryRepositories/blogsQueryRepository";
+import {blogCollection} from "../../db/mongo-db";
 
 
-export const contentCommentValidator = body('content')
+export const nameBlogValidator = body('name')
     .isString().withMessage('Должно быть строковым значением')
     .trim()
-    .isLength({min: 20, max: 300}).withMessage('Количество знаков 20-300')
+    .isLength({min: 1, max: 15}).withMessage('Количество знаков 1-15')
 
 export const descriptionBlogValidator = body('description')
     .isString().withMessage('Должно быть строковым значением')
@@ -20,12 +20,12 @@ export const websiteUrlValidator = body('websiteUrl')
     .isURL().withMessage('Введите валидный URL')
     .isLength({min: 1, max: 100}).withMessage('Количество знаков 1-100')
 
-export const idCommentValidator = param('id')
-    .custom(async commentId => {
-        const comment = await commentCollection.findOne({_id: new ObjectId(commentId)})
-        if (!comment) {
+export const idBlogValidator = param('id')
+    .custom(async blogId => {
+        const blog = await blogCollection.findOne(new ObjectId(blogId))
+        if (!blog) {
             throw new Error('Not found')
         } else {
-            return !!comment
+            return !!blog
         }
-    }).withMessage('Комментарий с заданным id не найден!')
+    }).withMessage('Блог с заданным id не найден!')

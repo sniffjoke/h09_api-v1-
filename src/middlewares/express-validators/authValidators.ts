@@ -1,6 +1,6 @@
 import {body, param} from "express-validator";
 import {ObjectId} from "mongodb";
-import {userCollection} from "../db/mongo-db";
+import {userCollection} from "../../db/mongo-db";
 
 export const idUserValidator = param('id')
     .custom(async id => {

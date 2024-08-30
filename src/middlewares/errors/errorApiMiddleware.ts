@@ -1,5 +1,5 @@
 import {Request, Response, NextFunction} from "express";
-import {ApiError} from "../exceptions/api.error";
+import {ApiError} from "../../exceptions/api.error";
 
 
 export const errorCustomApiMiddleware = (err: Error, req: Request, res: Response, next: NextFunction) => {

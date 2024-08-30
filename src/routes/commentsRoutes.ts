@@ -5,9 +5,9 @@ import {
     getCommentsController,
     updateCommentController
 } from "../controllers/commentsController";
-import {errorMiddleware} from "../middlewares/errorMiddleware";
-import {contentCommentValidator, idCommentValidator} from "../middlewares/commentsValidators";
-import {authMiddlewareWithBearer} from "../middlewares/authMiddlewareWithBearer"
+import {errorMiddleware} from "../middlewares/errors/errorMiddleware";
+import {contentCommentValidator, idCommentValidator} from "../middlewares/express-validators/commentsValidators";
+import {authMiddlewareWithBearer} from "../middlewares/auth/authMiddlewareWithBearer"
 import {isOwnMiddleware} from "../middlewares/isOwnMiddleware";
 
 

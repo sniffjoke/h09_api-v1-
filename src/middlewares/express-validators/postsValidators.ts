@@ -1,8 +1,8 @@
 import {body, param} from "express-validator";
 import {ObjectId} from "mongodb";
-import {blogsQueryRepository} from "../queryRepositories/blogsQueryRepository";
-import {postsQueryRepository} from "../queryRepositories/postsQueryRepository";
-import {blogCollection, postCollection} from "../db/mongo-db";
+import {blogsQueryRepository} from "../../queryRepositories/blogsQueryRepository";
+import {postsQueryRepository} from "../../queryRepositories/postsQueryRepository";
+import {blogCollection, postCollection} from "../../db/mongo-db";
 
 export const titlePostValidator = body('title')
     .isString().withMessage('Должно быть строковым значением')

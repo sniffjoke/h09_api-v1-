@@ -4,6 +4,7 @@ import {ObjectId} from "mongodb";
 
 
 export const getDevicesController = async (req: Request<any, any, any, any>, res: Response) => {
+    console.log(req.originalUrl);
     const devices = await deviceCollection.find().toArray()
     res.status(200).json(devices)
 }

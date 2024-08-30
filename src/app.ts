@@ -8,16 +8,18 @@ import testingRoutes from "./routes/testingRoutes";
 import usersRoutes from "./routes/usersRoutes";
 import authRoutes from "./routes/authRoutes";
 import commentsRoutes from "./routes/commentsRoutes";
-import {errorCustomApiMiddleware} from "./middlewares/errorApiMiddleware";
 import cookieParser from "cookie-parser"
 import devicesRoutes from "./routes/devicesRoutes";
+import {errorCustomApiMiddleware} from "./middlewares/errors/errorApiMiddleware";
 
 connectToDB()
 
 export const app = express()
+app.set('trust proxy', true);
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors())
+
 
 app.get('/', (req, res) => {
 

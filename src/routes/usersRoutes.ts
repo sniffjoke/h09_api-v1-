@@ -4,10 +4,10 @@ import {
     deleteUserByIdController,
     getUsersController
 } from "../controllers/usersController";
-import {idUserValidator} from "../middlewares/authValidators";
-import {errorMiddleware} from "../middlewares/errorMiddleware";
-import {authMiddlewareWithBasic} from "../middlewares/authMiddlewareWithBasic";
-import {emailUserValidator, loginUserValidator, passwordUserValidator} from "../middlewares/usersValidators";
+import {idUserValidator} from "../middlewares/express-validators/authValidators";
+import {errorMiddleware} from "../middlewares/errors/errorMiddleware";
+import {authMiddlewareWithBasic} from "../middlewares/auth/authMiddlewareWithBasic";
+import {emailUserValidator, loginUserValidator, passwordUserValidator} from "../middlewares/express-validators/usersValidators";
 
 
 const router = express.Router();

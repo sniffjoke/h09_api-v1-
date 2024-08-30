@@ -18,8 +18,8 @@ export class ApiError extends Error {
         return new ApiError(400, message, field);
     }
 
-    static AnyUnauthorizedError(message: any) {
-        return new ApiError(401, message, 'Any UnauthorizedError')
+    static RateLimitError() {
+        return new ApiError(429, 'Слишком частая попытка входа', 'Any field')
     }
 
 }

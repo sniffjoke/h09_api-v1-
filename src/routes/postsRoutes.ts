@@ -10,12 +10,12 @@ import {
     shortDescriptionPostValidator,
     blogIdValidator,
     idPostValidator
-} from "../middlewares/postsValidators";
-import {errorMiddleware} from "../middlewares/errorMiddleware";
-import {authMiddlewareWithBasic} from "../middlewares/authMiddlewareWithBasic";
-import {authMiddlewareWithBearer} from "../middlewares/authMiddlewareWithBearer"
+} from "../middlewares/express-validators/postsValidators";
+import {errorMiddleware} from "../middlewares/errors/errorMiddleware";
+import {authMiddlewareWithBasic} from "../middlewares/auth/authMiddlewareWithBasic";
+import {authMiddlewareWithBearer} from "../middlewares/auth/authMiddlewareWithBearer"
 import {createCommentByPostIdWithParamsController, getAllCommentsByPostIdController} from "../controllers/commentsController";
-import {contentCommentValidator} from "../middlewares/commentsValidators";
+import {contentCommentValidator} from "../middlewares/express-validators/commentsValidators";
 
 
 const router = express.Router();

@@ -9,15 +9,15 @@ import {
     idBlogValidator,
     nameBlogValidator,
     websiteUrlValidator
-} from "../middlewares/blogsValidators";
-import {errorMiddleware} from "../middlewares/errorMiddleware";
-import {authMiddlewareWithBasic} from "../middlewares/authMiddlewareWithBasic";
+} from "../middlewares/express-validators/blogsValidators";
+import {errorMiddleware} from "../middlewares/errors/errorMiddleware";
 import {getAllPostsByBlogId, createPostByBlogIdWithParams} from "../controllers/postsController";
 import {
     contentPostValidator,
     shortDescriptionPostValidator,
     titlePostValidator
-} from "../middlewares/postsValidators";
+} from "../middlewares/express-validators/postsValidators";
+import {authMiddlewareWithBasic} from "../middlewares/auth/authMiddlewareWithBasic";
 
 
 const router = express.Router();

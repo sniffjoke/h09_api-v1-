@@ -18,7 +18,9 @@ export const loginController = async (req: Request, res: Response, next: NextFun
     try {
         const {loginOrEmail, password} = req.body;
         const {accessToken, refreshToken} = await authService.loginUser({loginOrEmail, password})
-        res.cookie('refreshToken', refreshToken.split(';')[0], {httpOnly: true, secure: true})
+        res.set('user-agent', req.ip)
+        // res.cookie('refreshToken', refreshToken.split(';')[0], {httpOnly: true, secure: true})
+        res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
         res.status(200).json({accessToken})
     } catch (e) {
         next(e)
