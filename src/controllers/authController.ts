@@ -22,7 +22,6 @@ export const loginController = async (req: Request, res: Response, next: NextFun
         const {loginOrEmail, password} = req.body;
         const {accessToken, refreshToken} = await authService.loginUser({loginOrEmail, password})
         const deviceData: IDevice = {
-            deviceId: req.headers["user-agent"] as string,
             ip: ip.address(),
             title: req.headers["user-agent"] as string,
             lastActiveDate: new Date(Date.now()).toISOString(),

@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 import {deviceCollection} from "../db/mongo-db";
-import {ObjectId} from "mongodb";
+import {ObjectId, WithId} from "mongodb";
 import {IDevice} from "../types/devices.interface";
 import {tokenService} from "../services/token.service";
 import {ApiError} from "../exceptions/api.error";
@@ -13,12 +13,20 @@ export const getDevicesController = async (req: Request<any, any, any, any>, res
         return next(ApiError.UnauthorizedError())
     }
     const devices = await deviceCollection.find().toArray()
-    res.status(200).json(devices)
+    const deviceMap = (device: WithId<IDevice>) => ({
+        deviceId: device._id,
+        ip: device.ip,
+        title: device.title,
+        lastActiveDate: device.lastActiveDate,
+    })
+    const devicesOutput = devices.map((device) => {
+        return deviceMap(device)
+    })
+    res.status(200).json(devicesOutput)
 }
 
 export const createDeviceController = async (req: Request<any, any, any, any>, res: Response) => {
     const deviceData: IDevice = {
-        deviceId: '123jkfds3i24dfjs',
         ip: req.ip as string,
         title: req.headers["user-agent"] as string,
         lastActiveDate: new Date(Date.now()).toISOString(),
