@@ -27,6 +27,7 @@ router.route('/login')
 
 router.route('/registration')
     .post(
+        rateLimitMiddleware,
         loginAuthRegisterValidator,
         emailAuthRegisterValidator,
         passwordAuthRegisterValidator,
