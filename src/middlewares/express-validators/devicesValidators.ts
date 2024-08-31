@@ -1,13 +1,12 @@
 import {param} from "express-validator";
-import {ObjectId} from "mongodb";
 import {deviceCollection} from "../../db/mongo-db";
 
 export const idDeviceValidator = param('id')
     .custom(async id => {
-        const user: any = await deviceCollection.findOne({_id: new ObjectId(id)})
-        if (!user) {
+        const device: any = await deviceCollection.findOne({deviceId: id})
+        if (!device) {
             throw new Error('Not found')
         } else {
-            return !!user
+            return !!device
         }
     }).withMessage('Пользователь с заданным id не найден!')
