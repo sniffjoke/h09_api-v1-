@@ -2,6 +2,9 @@ import {NextFunction, Request, Response} from 'express';
 import {userService} from "../services/user.service";
 import {authService} from "../services/auth.service";
 import {tokenService} from "../services/token.service";
+import {IDevice} from "../types/devices.interface";
+import {deviceCollection} from "../db/mongo-db";
+import ip from 'ip'
 
 
 export const registerController = async (req: Request, res: Response, next: NextFunction) => {
@@ -18,7 +21,14 @@ export const loginController = async (req: Request, res: Response, next: NextFun
     try {
         const {loginOrEmail, password} = req.body;
         const {accessToken, refreshToken} = await authService.loginUser({loginOrEmail, password})
-        res.set('user-agent', req.ip)
+        const deviceData: IDevice = {
+            deviceId: '123jkfds3i24dfjs',
+            ip: ip.address(),
+            title: req.headers["user-agent"] as string,
+            lastActiveDate: new Date(Date.now()).toISOString(),
+        }
+        await deviceCollection.insertOne(deviceData)
+        // res.set('user-agent', req.ip)
         // res.cookie('refreshToken', refreshToken.split(';')[0], {httpOnly: true, secure: true})
         res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
         res.status(200).json({accessToken})
