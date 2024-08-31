@@ -38,7 +38,6 @@ export const authService = {
 
     async refreshToken(token: string) {
         const tokenValidate: any = tokenService.validateRefreshToken(token)
-        console.log(tokenValidate)
         if (!tokenValidate) {
             throw ApiError.UnauthorizedError()
         }

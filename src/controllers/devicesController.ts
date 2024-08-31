@@ -51,9 +51,14 @@ export const deleteDeviceByIdController = async (req: Request, res: Response, ne
     }
 }
 
-export const deleteAllDevicesController = async (req: Request, res: Response) => {
+export const deleteAllDevicesExceptCurrentController = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        await deviceCollection.deleteMany()
+        const token = req.cookies.refreshToken;
+        const validateToken: any = tokenService.validateRefreshToken(token)
+        if (!validateToken) {
+            return next(ApiError.UnauthorizedError())
+        }
+        await deviceCollection.deleteMany({deviceId: {$ne: validateToken.deviceId}})
         res.status(204).send('Удалено');
     } catch (e) {
         res.status(500).send(e)

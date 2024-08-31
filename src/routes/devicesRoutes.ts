@@ -1,6 +1,6 @@
 import express from "express";
 import {
-    deleteAllDevicesController,
+    deleteAllDevicesExceptCurrentController,
     deleteDeviceByIdController,
     getDevicesController
 } from "../controllers/devicesController";
@@ -15,7 +15,7 @@ router.route('/')
         getDevicesController
     )
     .delete(
-        deleteAllDevicesController
+        deleteAllDevicesExceptCurrentController
     )
 
 router.route('/:id')
