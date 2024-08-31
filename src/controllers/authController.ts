@@ -51,7 +51,7 @@ export const activateEmailUserController = async (req: Request, res: Response, n
 
 export const resendEmailController = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        await authService.resendEmail(req.body.email)
+        authService.resendEmail(req.body.email)
         res.status(204).send('Ссылка повторна отправлена')
     } catch (e) {
         next(e)

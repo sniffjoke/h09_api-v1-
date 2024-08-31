@@ -18,7 +18,7 @@ class MailService {
     } // export new
 
     async sendActivationMail(to: string, link: string) {
-        await this.transporter.sendMail({
+        this.transporter.sendMail({
             from: process.env.SMTP_USER,
             to,
             subject: 'Активация аккаунта на ' + process.env.API_URL,
