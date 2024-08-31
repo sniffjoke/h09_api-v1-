@@ -37,6 +37,7 @@ router.route('/registration')
 
 router.route('/registration-confirmation')
     .post(
+        rateLimitMiddleware,
         activateEmailUserController
     );
 
