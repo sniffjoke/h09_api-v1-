@@ -8,7 +8,7 @@ import {ApiError} from "../exceptions/api.error";
 
 export const rateLimitMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        let tryingCount: boolean
+        let overLimitRate: boolean
         console.log(req.originalUrl)
         const rateLimitData: IRateLimit = {
             URL: req.originalUrl,
@@ -17,11 +17,11 @@ export const rateLimitMiddleware = async (req: Request, res: Response, next: Nex
         }
         const rateIPEnters = await rateLimitCollection.find({IP: rateLimitData.IP, URL: rateLimitData.URL}).toArray()
         try {
-            tryingCount = ((new Date(rateLimitData.date).getTime()) - (new Date(rateIPEnters[rateIPEnters.length - 5].date).getTime())) / 1000 < 10
+            overLimitRate = ((new Date(rateLimitData.date).getTime()) - (new Date(rateIPEnters[rateIPEnters.length - 5].date).getTime())) / 1000 < 10
         } catch (e) {
-            tryingCount = false
+            overLimitRate = false
         }
-        if (rateIPEnters.length > 4 && tryingCount) {
+        if (rateIPEnters.length > 4 && overLimitRate) {
             return next(ApiError.RateLimitError());
         }
         await rateLimitCollection.insertOne(rateLimitData as WithId<IRateLimit>)

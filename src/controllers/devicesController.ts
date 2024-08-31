@@ -1,11 +1,17 @@
-import {Request, Response} from 'express';
+import {NextFunction, Request, Response} from 'express';
 import {deviceCollection} from "../db/mongo-db";
 import {ObjectId} from "mongodb";
 import {IDevice} from "../types/devices.interface";
+import {tokenService} from "../services/token.service";
+import {ApiError} from "../exceptions/api.error";
 
 
-export const getDevicesController = async (req: Request<any, any, any, any>, res: Response) => {
-    console.log(req.originalUrl);
+export const getDevicesController = async (req: Request<any, any, any, any>, res: Response, next: NextFunction) => {
+    const token = req.cookies.refreshToken;
+    const validateToken = tokenService.validateRefreshToken(token)
+    if (!validateToken) {
+        return next(ApiError.UnauthorizedError())
+    }
     const devices = await deviceCollection.find().toArray()
     res.status(200).json(devices)
 }
