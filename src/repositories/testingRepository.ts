@@ -15,16 +15,16 @@ export const testingRepository = {
         const users = await userCollection.deleteMany()
         const comments = await commentCollection.deleteMany()
         const tokens = await tokenCollection.deleteMany()
-        const devices = await deviceCollection.deleteMany()
-        const rates = await rateLimitCollection.deleteMany()
+        // const devices = await deviceCollection.deleteMany()
+        // const rates = await rateLimitCollection.deleteMany()
         return {
             blogs,
             posts,
             users,
             comments,
             tokens,
-            devices,
-            rates
+            // devices,
+            // rates
         }
     },
 }
