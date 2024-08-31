@@ -4,6 +4,7 @@ import {ObjectId, WithId} from "mongodb";
 import {IDevice} from "../types/devices.interface";
 import {tokenService} from "../services/token.service";
 import {ApiError} from "../exceptions/api.error";
+import {v4 as uuid} from 'uuid';
 
 
 export const getDevicesController = async (req: Request<any, any, any, any>, res: Response, next: NextFunction) => {
@@ -14,7 +15,7 @@ export const getDevicesController = async (req: Request<any, any, any, any>, res
     }
     const devices = await deviceCollection.find().toArray()
     const deviceMap = (device: WithId<IDevice>) => ({
-        deviceId: device._id,
+        deviceId: device.deviceId,
         ip: device.ip,
         title: device.title,
         lastActiveDate: device.lastActiveDate,
@@ -28,6 +29,7 @@ export const getDevicesController = async (req: Request<any, any, any, any>, res
 export const createDeviceController = async (req: Request<any, any, any, any>, res: Response) => {
     const deviceData: IDevice = {
         ip: req.ip as string,
+        deviceId: uuid(),
         title: req.headers["user-agent"] as string,
         lastActiveDate: new Date(Date.now()).toISOString(),
     }

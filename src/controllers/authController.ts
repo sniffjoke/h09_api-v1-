@@ -5,6 +5,7 @@ import {tokenService} from "../services/token.service";
 import {IDevice} from "../types/devices.interface";
 import {deviceCollection} from "../db/mongo-db";
 import ip from 'ip'
+import {v4 as uuid} from 'uuid';
 
 
 export const registerController = async (req: Request, res: Response, next: NextFunction) => {
@@ -22,6 +23,7 @@ export const loginController = async (req: Request, res: Response, next: NextFun
         const {loginOrEmail, password} = req.body;
         const {accessToken, refreshToken} = await authService.loginUser({loginOrEmail, password})
         const deviceData: IDevice = {
+            deviceId: uuid(),
             ip: ip.address(),
             title: req.headers["user-agent"] as string,
             lastActiveDate: new Date(Date.now()).toISOString(),
