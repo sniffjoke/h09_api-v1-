@@ -8,15 +8,18 @@ import {ApiError} from "../exceptions/api.error";
 
 export const rateLimitMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        let tryingCount: boolean
         const rateLimitData: IRateLimit = {
             URL: req.baseUrl,
             IP: ip.address(),
             date: new Date(Date.now()).toISOString()
         }
         const rateIPEnters = await rateLimitCollection.find({IP: rateLimitData.IP}).toArray()
-        const tryingCount = ((new Date(rateLimitData.date).getTime()) - (new Date(rateIPEnters[rateIPEnters.length - 1].date).getTime()))/1000 < 10
-        console.log(tryingCount)
-        console.log(rateIPEnters.length)
+        try {
+            tryingCount = ((new Date(rateLimitData.date).getTime()) - (new Date(rateIPEnters[rateIPEnters.length - 1].date).getTime())) / 1000 < 10
+        } catch (e) {
+            tryingCount = false
+        }
         if (rateIPEnters.length > 4 && tryingCount) {
             return next(ApiError.RateLimitError());
         }
