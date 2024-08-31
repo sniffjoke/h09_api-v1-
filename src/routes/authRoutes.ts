@@ -41,6 +41,7 @@ router.route('/registration-confirmation')
 
 router.route('/registration-email-resending')
     .post(
+        rateLimitMiddleware,
         emailAuthRegisterValidator,
         errorMiddleware,
         resendEmailController

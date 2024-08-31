@@ -107,7 +107,7 @@ export const authService = {
         await this.isActivateEmailByStatus(email)
         const activationLink = uuid()
         const emailConfirmation = userService.createEmailConfirmationInfo(false, activationLink)
-        await mailService.sendActivationMail(email, `${process.env.API_URL}/api/auth/registration-confirmation/?code=${activationLink}`)
+        mailService.sendActivationMail(email, `${process.env.API_URL}/api/auth/registration-confirmation/?code=${activationLink}`)
         const updateUserInfo = await authRepository.updateUserWithResendActivateEmail(email, emailConfirmation)
         if (!updateUserInfo) {
             throw ApiError.UnauthorizedError()
