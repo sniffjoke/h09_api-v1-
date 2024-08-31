@@ -4,6 +4,8 @@ import {
     deleteDeviceByIdController,
     getDevicesController
 } from "../controllers/devicesController";
+import {idDeviceValidator} from "../middlewares/express-validators/devicesValidators";
+import {errorMiddleware} from "../middlewares/errors/errorMiddleware";
 
 
 const router = express.Router();
@@ -18,6 +20,8 @@ router.route('/')
 
 router.route('/:id')
     .delete(
+        idDeviceValidator,
+        errorMiddleware,
         deleteDeviceByIdController
     )
 
