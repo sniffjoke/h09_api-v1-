@@ -14,7 +14,7 @@ import {cryptoService} from "./crypto.service";
 
 export const authService = {
 
-    async loginUser(userData: LoginUserDto) {
+    async loginUser(userData: LoginUserDto, deviceId: string) {
         const user = await this.validateUser(userData.loginOrEmail)
         if (!user) {
             throw ApiError.UnauthorizedError()
@@ -23,7 +23,7 @@ export const authService = {
         if (!isPasswordCorrect) {
             throw ApiError.UnauthorizedError()
         }
-        const {accessToken, refreshToken} = tokenService.createTokens(user._id.toString())
+        const {accessToken, refreshToken} = tokenService.createTokens(user._id.toString(), deviceId)
         const tokenData = {
             userId: user._id.toString(),
             refreshToken,
@@ -38,6 +38,7 @@ export const authService = {
 
     async refreshToken(token: string) {
         const tokenValidate: any = tokenService.validateRefreshToken(token)
+        console.log(tokenValidate)
         if (!tokenValidate) {
             throw ApiError.UnauthorizedError()
         }
@@ -49,7 +50,7 @@ export const authService = {
         if (!updateTokenInfo) {
             throw ApiError.UnauthorizedError()
         }
-        const {refreshToken, accessToken} = tokenService.createTokens(isTokenExists.userId)
+        const {refreshToken, accessToken} = tokenService.createTokens(isTokenExists.userId, tokenValidate.deviceId)
         const tokenData = {
             userId: isTokenExists.userId,
             refreshToken,

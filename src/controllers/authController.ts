@@ -21,13 +21,13 @@ export const registerController = async (req: Request, res: Response, next: Next
 export const loginController = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const {loginOrEmail, password} = req.body;
-        const {accessToken, refreshToken} = await authService.loginUser({loginOrEmail, password})
         const deviceData: IDevice = {
             deviceId: uuid(),
             ip: ip.address(),
             title: req.headers["user-agent"] as string,
             lastActiveDate: new Date(Date.now()).toISOString(),
         }
+        const {accessToken, refreshToken} = await authService.loginUser({loginOrEmail, password}, deviceData.deviceId)
         await deviceCollection.insertOne(deviceData)
         // res.set('user-agent', req.ip)
         // res.cookie('refreshToken', refreshToken.split(';')[0], {httpOnly: true, secure: true})
