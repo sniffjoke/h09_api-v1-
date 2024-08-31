@@ -16,7 +16,7 @@ export const rateLimitMiddleware = async (req: Request, res: Response, next: Nex
         }
         const rateIPEnters = await rateLimitCollection.find({IP: rateLimitData.IP}).toArray()
         try {
-            tryingCount = ((new Date(rateLimitData.date).getTime()) - (new Date(rateIPEnters[rateIPEnters.length - 1].date).getTime())) / 1000 < 10
+            tryingCount = ((new Date(rateLimitData.date).getTime()) - (new Date(rateIPEnters[rateIPEnters.length - 6].date).getTime())) / 1000 < 10
         } catch (e) {
             tryingCount = false
         }
