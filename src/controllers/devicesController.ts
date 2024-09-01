@@ -14,10 +14,10 @@ export const getDevicesController = async (req: Request<any, any, any, any>, res
     if (!validateToken) {
         return next(ApiError.UnauthorizedError())
     }
-    const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
-    if (!isTokenExists || isTokenExists.blackList) {
-        return next(ApiError.UnauthorizedError())
-    }
+    // const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
+    // if (!isTokenExists || isTokenExists.blackList) {
+    //     return next(ApiError.UnauthorizedError())
+    // }
     const devices = await deviceCollection.find().toArray()
     const deviceMap = (device: WithId<IDevice>) => ({
         deviceId: device.deviceId,
@@ -49,14 +49,12 @@ export const deleteDeviceByIdController = async (req: Request, res: Response, ne
         if (!validateToken) {
             return next(ApiError.UnauthorizedError())
         }
-        const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
-        if (!isTokenExists || isTokenExists.blackList) {
-            return next(ApiError.UnauthorizedError())
-        }
+        // const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
+        // if (!isTokenExists || isTokenExists.blackList) {
+        //     return next(ApiError.UnauthorizedError())
+        // }
 
-        console.log(validateToken._id)
         const removedToken = await tokenCollection.findOne({deviceId: req.params.id})
-        console.log(removedToken?.userId)
         if (validateToken._id !== removedToken?.userId) {
             res.status(403).send('Сессия принадлежит другому пользователю')
             return
@@ -79,14 +77,13 @@ export const deleteAllDevicesExceptCurrentController = async (req: Request, res:
         if (!validateToken) {
             return next(ApiError.UnauthorizedError())
         }
-        const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
-        if (!isTokenExists || isTokenExists.blackList) {
-            return next(ApiError.UnauthorizedError())
-        }
+        // const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
+        // if (!isTokenExists || isTokenExists.blackList) {
+        //     return next(ApiError.UnauthorizedError())
+        // }
         await deviceCollection.deleteMany({deviceId: {$ne: validateToken.deviceId}})
-        console.log(validateToken.deviceId)
-        // await tokenCollection.updateMany({refreshToken: token}, {$set: {blackList: true}})
-        await tokenCollection.updateMany({deviceId: {$ne: validateToken.deviceId}}, {$set: {blackList: true}})
+        await tokenCollection.updateMany({refreshToken: token}, {$set: {blackList: true}})
+        // await tokenCollection.updateMany({deviceId: {$ne: validateToken.deviceId}}, {$set: {blackList: true}})
         res.status(204).send('Удалено');
     } catch (e) {
         res.status(500).send(e)
