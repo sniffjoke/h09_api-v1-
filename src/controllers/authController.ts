@@ -28,7 +28,16 @@ export const loginController = async (req: Request, res: Response, next: NextFun
             lastActiveDate: new Date(Date.now()).toISOString(),
         }
         const {accessToken, refreshToken} = await authService.loginUser({loginOrEmail, password}, deviceData.deviceId)
-        await deviceCollection.insertOne(deviceData)
+        const findSession = await deviceCollection.findOne({ip: deviceData.ip, title: deviceData.title})
+        if (findSession) {
+            await deviceCollection.updateMany(findSession, {
+                $set: {
+                    lastActiveDate: new Date(Date.now()).toISOString(),
+                }
+            })
+        } else {
+            await deviceCollection.insertOne(deviceData)
+        }
         // res.set('user-agent', req.ip)
         // res.cookie('refreshToken', refreshToken.split(';')[0], {httpOnly: true, secure: true})
         res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
