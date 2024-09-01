@@ -49,21 +49,22 @@ export const deleteDeviceByIdController = async (req: Request, res: Response, ne
         if (!validateToken) {
             return next(ApiError.UnauthorizedError())
         }
-        // const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
-        // if (!isTokenExists || isTokenExists.blackList) {
-        //     return next(ApiError.UnauthorizedError())
-        // }
+        const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
+        if (!isTokenExists || isTokenExists.blackList) {
+            return next(ApiError.UnauthorizedError())
+        }
 
         const removedToken = await tokenCollection.findOne({deviceId: req.params.id})
         if (validateToken._id !== removedToken?.userId) {
             res.status(403).send('Сессия принадлежит другому пользователю')
             return
         }
-        await deviceCollection.deleteOne({deviceId: req.params.id})
         const updateTokenInfo = await tokensRepository.updateTokenForActivate(token)
         if (!updateTokenInfo) {
             return  next(ApiError.UnauthorizedError())
         }
+        await deviceCollection.deleteOne({deviceId: req.params.id})
+
         res.status(204).send('Удалено');
     } catch (e) {
         res.status(500).send(e)
@@ -77,10 +78,10 @@ export const deleteAllDevicesExceptCurrentController = async (req: Request, res:
         if (!validateToken) {
             return next(ApiError.UnauthorizedError())
         }
-        // const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
-        // if (!isTokenExists || isTokenExists.blackList) {
-        //     return next(ApiError.UnauthorizedError())
-        // }
+        const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
+        if (!isTokenExists || isTokenExists.blackList) {
+            return next(ApiError.UnauthorizedError())
+        }
         await deviceCollection.deleteMany({deviceId: {$ne: validateToken.deviceId}})
         // await tokenCollection.updateMany({refreshToken: token}, {$set: {blackList: true}})
         await tokenCollection.updateMany({deviceId: {$ne: validateToken.deviceId}}, {$set: {blackList: true}})
