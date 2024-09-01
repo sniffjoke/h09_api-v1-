@@ -32,7 +32,7 @@ export const authService = {
     },
 
     async refreshToken(token: string) {
-        const tokenValidate: any = tokenService.validateAccessToken(token)
+        const tokenValidate: any = tokenService.validateRefreshToken(token)
         if (!tokenValidate) {
             throw ApiError.AnyUnauthorizedError('1')
         }
