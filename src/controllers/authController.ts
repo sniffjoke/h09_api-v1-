@@ -40,8 +40,8 @@ export const loginController = async (req: Request, res: Response, next: NextFun
             await deviceCollection.insertOne(deviceData)
         }
         // res.set('user-agent', req.ip)
-        // res.cookie('refreshToken', refreshToken.split(';')[0], {httpOnly: true, secure: true})
-        res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
+        res.cookie('refreshToken', refreshToken.split(';')[0], {httpOnly: true, secure: true})
+        // res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
         res.status(200).json({accessToken})
     } catch (e) {
         next(e)
