@@ -81,7 +81,8 @@ export const resendEmailController = async (req: Request, res: Response, next: N
 
 export const refreshTokenController = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const {refreshToken, accessToken} = await authService.refreshToken(Object.values(req.cookies)[0])
+        // const {refreshToken, accessToken} = await authService.refreshToken(Object.values(req.cookies)[0])
+        const {refreshToken, accessToken} = await authService.refreshToken(req.cookies.refreshToken)
         res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
         res.status(200).json({accessToken})
     } catch (e) {
