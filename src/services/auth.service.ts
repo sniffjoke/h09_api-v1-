@@ -25,17 +25,18 @@ export const authService = {
             throw ApiError.UnauthorizedError()
         }
         const {accessToken, refreshToken} = tokenService.createTokens(user._id.toString(), deviceId)
-        // const tokenData = {
-        //     userId: user._id.toString(),
-        //     deviceId,
-        //     refreshToken,
-        //     blackList: false
-        // } as RTokenDB
+        const tokenData = {
+            userId: user._id.toString(),
+            deviceId,
+            refreshToken,
+            blackList: false
+        } as RTokenDB
         // const findedToken = await tokenCollection.findOne({userId: user._id.toString()})
+        // console.log(findedToken)
         // if (findedToken && !findedToken.blackList) {
         //     await tokenCollection.updateOne(findedToken, {$set: {refreshToken}})
         // } else {
-        // await tokensRepository.createToken(tokenData)
+        await tokensRepository.createToken(tokenData)
         // }
         // await tokenCollection.updateMany({deviceId: {$ne: tokenData.deviceId}}, {$set: {blackList: true}})
         return {
@@ -47,26 +48,26 @@ export const authService = {
     async refreshToken(token: string) {
         const tokenValidate: any = tokenService.validateRefreshToken(token)
         if (!tokenValidate) {
-            throw ApiError.AnyUnauthorizedError('1')
+            throw ApiError.UnauthorizedError()
         }
         const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
         if (!isTokenExists || isTokenExists.blackList) {
-            throw ApiError.AnyUnauthorizedError('2')
+            throw ApiError.UnauthorizedError()
         }
         const updateTokenInfo = await tokensRepository.updateTokenForActivate(token)
         if (!updateTokenInfo) {
-            throw ApiError.AnyUnauthorizedError('3')
+            throw ApiError.UnauthorizedError()
         }
         const {refreshToken, accessToken} = tokenService.createTokens(isTokenExists.userId, tokenValidate.deviceId)
         const tokenData = {
             userId: isTokenExists.userId,
-            deviceId: isTokenExists.deviceId,
+            deviceId: tokenValidate.deviceId,
             refreshToken,
             blackList: false
         } as RTokenDB
         const addTokenToDb = await tokensRepository.createToken(tokenData)
         if (!addTokenToDb) {
-            throw ApiError.AnyUnauthorizedError('5')
+            throw ApiError.UnauthorizedError()
         }
         return {
             refreshToken,
@@ -97,7 +98,6 @@ export const authService = {
         if (!updatedToken) {
             throw ApiError.UnauthorizedError()
         }
-        console.log(tokenVerified.deviceId)
         const updateDevices = await deviceCollection.deleteOne({deviceId: tokenVerified.deviceId})
         if (!updateDevices) {
             throw ApiError.UnauthorizedError()
