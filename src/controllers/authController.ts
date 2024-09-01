@@ -33,7 +33,6 @@ export const loginController = async (req: Request, res: Response, next: NextFun
         if (findSession) {
             await deviceCollection.updateMany(findSession, {
                 $set: {
-                    deviceId: deviceData.deviceId,
                     lastActiveDate: new Date(Date.now()).toISOString(),
                 }
             })

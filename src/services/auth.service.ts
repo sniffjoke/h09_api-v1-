@@ -10,7 +10,7 @@ import {v4 as uuid} from "uuid";
 import mailService from "./mail.service";
 import {userService} from "./user.service";
 import {cryptoService} from "./crypto.service";
-import {deviceCollection, tokenCollection} from "../db/mongo-db";
+import {deviceCollection} from "../db/mongo-db";
 
 
 export const authService = {
@@ -32,7 +32,7 @@ export const authService = {
             blackList: false
         } as RTokenDB
         await tokensRepository.createToken(tokenData)
-        await tokenCollection.updateMany({deviceId: {$ne: tokenData.deviceId}}, {$set: {blackList: true}})
+        // await tokenCollection.updateMany({deviceId: {$ne: tokenData.deviceId}}, {$set: {blackList: true}})
         return {
             accessToken,
             refreshToken
