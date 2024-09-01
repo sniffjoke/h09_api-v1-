@@ -44,7 +44,7 @@ export const deleteDeviceByIdController = async (req: Request, res: Response, ne
         if (!validateToken) {
             return next(ApiError.UnauthorizedError())
         }
-        const removedToken = await tokenCollection.findOne({deviceId: req.params.id})
+        const removedToken = await tokenCollection.findOne({refreshToken: token})
         if (validateToken._id !== removedToken?.userId) {
             res.status(403).send('Сессия принадлежит другому пользователю')
             return
