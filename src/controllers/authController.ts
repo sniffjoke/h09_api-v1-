@@ -3,9 +3,12 @@ import {userService} from "../services/user.service";
 import {authService} from "../services/auth.service";
 import {tokenService} from "../services/token.service";
 import {IDevice} from "../types/devices.interface";
-import {deviceCollection} from "../db/mongo-db";
+import {deviceCollection, tokenCollection} from "../db/mongo-db";
 import ip from 'ip'
 import {v4 as uuid} from 'uuid';
+import {RTokenDB} from "../types/tokens.interface";
+import {ApiError} from "../exceptions/api.error";
+import {tokensRepository} from "../repositories/tokensRepository";
 
 
 export const registerController = async (req: Request, res: Response, next: NextFunction) => {
@@ -29,6 +32,18 @@ export const loginController = async (req: Request, res: Response, next: NextFun
         }
         const {accessToken, refreshToken} = await authService.loginUser({loginOrEmail, password}, deviceData.deviceId)
 
+        const user = await authService.validateUser(loginOrEmail)
+        if (!user) {
+            return next(ApiError.UnauthorizedError())
+        }
+
+        const tokenData = {
+            userId: user._id.toString(),
+            deviceId: deviceData.deviceId,
+            refreshToken,
+            blackList: false
+        } as RTokenDB
+
         const findSession = await deviceCollection.findOne({ip: deviceData.ip, title: deviceData.title})
         if (findSession) {
             await deviceCollection.updateMany(findSession, {
@@ -36,8 +51,16 @@ export const loginController = async (req: Request, res: Response, next: NextFun
                     lastActiveDate: new Date(Date.now()).toISOString(),
                 }
             })
+            await tokenCollection.insertOne({
+                userId: user._id.toString(),
+                deviceId: findSession.deviceId,
+                refreshToken,
+                blackList: false
+            })
+            await tokenCollection.updateMany({refreshToken: {$ne: refreshToken}, deviceId: findSession.deviceId}, {$set: {blackList: true}})
         } else {
             await deviceCollection.insertOne(deviceData)
+            await tokensRepository.createToken(tokenData)
         }
         // res.set('user-agent', req.ip)
         res.cookie('refreshToken', refreshToken.split(';')[0], {httpOnly: true, secure: true})
