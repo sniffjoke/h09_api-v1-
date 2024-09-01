@@ -44,14 +44,20 @@ export const deleteDeviceByIdController = async (req: Request, res: Response, ne
         if (!validateToken) {
             return next(ApiError.UnauthorizedError())
         }
-        const removedToken = await tokenCollection.findOne({refreshToken: token})
-        if (validateToken._id !== removedToken?.userId) {
+
+        const findToken = await tokenCollection.findOne({deviceId: req.params.id})
+        if (!findToken) {
+            return next(ApiError.UnauthorizedError())
+        }
+
+        // const removedToken = await tokenCollection.findOne({refreshToken: token})
+        if (validateToken._id !== findToken?.userId) {
             res.status(403).send('Сессия принадлежит другому пользователю')
             return
         }
         await deviceCollection.deleteOne({deviceId: req.params.id})
         // const updateTokenInfo = await tokensRepository.updateTokenForActivate(token)
-        const updateTokenInfo = await tokenCollection.updateOne({refreshToken: removedToken?.refreshToken}, {$set: {blackList: true}})
+        const updateTokenInfo = await tokenCollection.updateOne({refreshToken: findToken?.refreshToken}, {$set: {blackList: true}})
         if (!updateTokenInfo) {
             return  next(ApiError.UnauthorizedError())
         }
