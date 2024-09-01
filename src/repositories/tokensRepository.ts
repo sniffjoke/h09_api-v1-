@@ -17,6 +17,7 @@ export const tokensRepository = {
     async createToken(tokenData: RTokenDB): Promise<ObjectId> {
         const token = {
             userId: tokenData.userId,
+            deviceId: tokenData.deviceId,
             refreshToken: tokenData.refreshToken,
             blackList: false
     } as WithId<RTokenDB>;
