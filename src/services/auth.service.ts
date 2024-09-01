@@ -10,7 +10,7 @@ import {v4 as uuid} from "uuid";
 import mailService from "./mail.service";
 import {userService} from "./user.service";
 import {cryptoService} from "./crypto.service";
-import {deviceCollection} from "../db/mongo-db";
+import {deviceCollection, tokenCollection} from "../db/mongo-db";
 
 
 export const authService = {
@@ -94,7 +94,8 @@ export const authService = {
         if (!tokenFromDb || tokenFromDb.blackList) {
             throw ApiError.UnauthorizedError()
         }
-        const updatedToken = await tokensRepository.updateTokenForActivate(tokenFromDb.refreshToken)
+        // const updatedToken = await tokensRepository.updateTokenForActivate(tokenFromDb.refreshToken)
+        const updatedToken = await tokenCollection.updateMany({refreshToken: tokenFromDb.refreshToken}, {$set: {blackList: true}})
         if (!updatedToken) {
             throw ApiError.UnauthorizedError()
         }
