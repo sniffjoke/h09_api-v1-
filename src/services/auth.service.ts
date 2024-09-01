@@ -31,7 +31,6 @@ export const authService = {
             refreshToken,
             blackList: false
         } as RTokenDB
-        console.log(tokenData)
         await tokensRepository.createToken(tokenData)
         return {
             accessToken,

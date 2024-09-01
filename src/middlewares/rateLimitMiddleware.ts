@@ -9,7 +9,6 @@ import {ApiError} from "../exceptions/api.error";
 export const rateLimitMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
         let overLimitRate: boolean
-        console.log(req.originalUrl)
         const rateLimitData: IRateLimit = {
             URL: req.originalUrl,
             IP: ip.address(),
