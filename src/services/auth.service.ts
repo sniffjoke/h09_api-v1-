@@ -10,6 +10,7 @@ import {v4 as uuid} from "uuid";
 import mailService from "./mail.service";
 import {userService} from "./user.service";
 import {cryptoService} from "./crypto.service";
+import {deviceCollection} from "../db/mongo-db";
 
 
 export const authService = {
@@ -26,6 +27,7 @@ export const authService = {
         const {accessToken, refreshToken} = tokenService.createTokens(user._id.toString(), deviceId)
         const tokenData = {
             userId: user._id.toString(),
+            deviceId,
             refreshToken,
             blackList: false
         } as RTokenDB
@@ -52,6 +54,7 @@ export const authService = {
         const {refreshToken, accessToken} = tokenService.createTokens(isTokenExists.userId, tokenValidate.deviceId)
         const tokenData = {
             userId: isTokenExists.userId,
+            deviceId: tokenValidate.deviceId,
             refreshToken,
             blackList: false
         } as RTokenDB
@@ -76,7 +79,7 @@ export const authService = {
     },
 
     async logoutUser(token: string) {
-        const tokenVerified = tokenService.validateRefreshToken(token)
+        const tokenVerified: any = tokenService.validateRefreshToken(token)
         if (!tokenVerified) {
             throw ApiError.UnauthorizedError()
         }
@@ -86,6 +89,10 @@ export const authService = {
         }
         const updatedToken = await tokensRepository.updateTokenForActivate(tokenFromDb.refreshToken)
         if (!updatedToken) {
+            throw ApiError.UnauthorizedError()
+        }
+        const updateDevices = await deviceCollection.deleteOne({deviceId: tokenVerified.deviceId})
+        if (!updateDevices) {
             throw ApiError.UnauthorizedError()
         }
         return updatedToken

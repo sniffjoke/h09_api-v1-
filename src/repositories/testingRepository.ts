@@ -2,7 +2,7 @@ import {
     blogCollection,
     commentCollection,
     deviceCollection,
-    postCollection, rateLimitCollection,
+    postCollection,
     tokenCollection,
     userCollection
 } from "../db/mongo-db";
@@ -15,7 +15,7 @@ export const testingRepository = {
         const users = await userCollection.deleteMany()
         const comments = await commentCollection.deleteMany()
         const tokens = await tokenCollection.deleteMany()
-        // const devices = await deviceCollection.deleteMany()
+        const devices = await deviceCollection.deleteMany()
         // const rates = await rateLimitCollection.deleteMany()
         return {
             blogs,
@@ -23,7 +23,7 @@ export const testingRepository = {
             users,
             comments,
             tokens,
-            // devices,
+            devices,
             // rates
         }
     },
