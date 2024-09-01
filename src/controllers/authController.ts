@@ -3,9 +3,11 @@ import {userService} from "../services/user.service";
 import {authService} from "../services/auth.service";
 import {tokenService} from "../services/token.service";
 import {IDevice} from "../types/devices.interface";
-import {deviceCollection} from "../db/mongo-db";
+import {deviceCollection, tokenCollection} from "../db/mongo-db";
 import ip from 'ip'
 import {v4 as uuid} from 'uuid';
+import {ApiError} from "../exceptions/api.error";
+import {RTokenDB} from "../types/tokens.interface";
 
 
 export const registerController = async (req: Request, res: Response, next: NextFunction) => {
@@ -20,24 +22,45 @@ export const registerController = async (req: Request, res: Response, next: Next
 
 export const loginController = async (req: Request, res: Response, next: NextFunction) => {
     try {
+
         const {loginOrEmail, password} = req.body;
+        const user = await authService.validateUser(loginOrEmail)
+        if (!user) {
+            return next(ApiError.UnauthorizedError())
+        }
+        const myIp = ip.address()
+        const userAgent = req.headers['user-agent'] as string;
+        const findSession = await deviceCollection.findOne({ip: myIp, title: userAgent})
         const deviceData: IDevice = {
-            deviceId: uuid(),
-            ip: ip.address(),
-            title: req.headers["user-agent"] as string,
+            deviceId: findSession ? findSession.deviceId : uuid(),
+            ip: myIp,
+            title: userAgent,
             lastActiveDate: new Date(Date.now()).toISOString(),
         }
         const {accessToken, refreshToken} = await authService.loginUser({loginOrEmail, password}, deviceData.deviceId)
 
-        const findSession = await deviceCollection.findOne({ip: deviceData.ip, title: deviceData.title})
         if (findSession) {
-            await deviceCollection.updateMany(findSession, {
+            await deviceCollection.updateOne(findSession, {
                 $set: {
                     lastActiveDate: new Date(Date.now()).toISOString(),
                 }
             })
+            await tokenCollection.insertOne({
+                userId: user._id.toString(),
+                deviceId: findSession.deviceId,
+                refreshToken,
+                blackList: false,
+            })
+            await tokenCollection.updateMany({refreshToken: {$ne: refreshToken}, deviceId: findSession.deviceId}, {$set: {blackList: true}})
         } else {
+            const tokenData = {
+                userId: user._id.toString(),
+                deviceId: deviceData.deviceId,
+                refreshToken,
+                blackList: false
+            } as RTokenDB
             await deviceCollection.insertOne(deviceData)
+            await tokenCollection.insertOne(tokenData)
         }
         // res.set('user-agent', req.ip)
         res.cookie('refreshToken', refreshToken.split(';')[0], {httpOnly: true, secure: true})

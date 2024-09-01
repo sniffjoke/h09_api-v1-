@@ -25,20 +25,6 @@ export const authService = {
             throw ApiError.UnauthorizedError()
         }
         const {accessToken, refreshToken} = tokenService.createTokens(user._id.toString(), deviceId)
-        const tokenData = {
-            userId: user._id.toString(),
-            deviceId,
-            refreshToken,
-            blackList: false
-        } as RTokenDB
-        // const findedToken = await tokenCollection.findOne({userId: user._id.toString()})
-        // console.log(findedToken)
-        // if (findedToken && !findedToken.blackList) {
-        //     await tokenCollection.updateOne(findedToken, {$set: {refreshToken}})
-        // } else {
-        await tokensRepository.createToken(tokenData)
-        // }
-        // await tokenCollection.updateMany({deviceId: {$ne: tokenData.deviceId}}, {$set: {blackList: true}})
         return {
             accessToken,
             refreshToken
