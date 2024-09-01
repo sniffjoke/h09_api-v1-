@@ -74,20 +74,20 @@ export const authService = {
     async logoutUser(token: string) {
         const tokenVerified: any = tokenService.validateRefreshToken(token)
         if (!tokenVerified) {
-            throw ApiError.UnauthorizedError()
+            throw ApiError.AnyUnauthorizedError('1')
         }
         const tokenFromDb = await tokensRepository.findTokenByRefreshToken(token)
         if (!tokenFromDb || tokenFromDb.blackList) {
-            throw ApiError.UnauthorizedError()
+            throw ApiError.AnyUnauthorizedError('2')
         }
         // const updatedToken = await tokensRepository.updateTokenForActivate(tokenFromDb.refreshToken)
         const updatedToken = await tokenCollection.updateMany({deviceId: tokenVerified.deviceId}, {$set: {blackList: true}})
         if (!updatedToken) {
-            throw ApiError.UnauthorizedError()
+            throw ApiError.AnyUnauthorizedError('3')
         }
         const updateDevices = await deviceCollection.deleteOne({deviceId: tokenVerified.deviceId})
         if (!updateDevices) {
-            throw ApiError.UnauthorizedError()
+            throw ApiError.AnyUnauthorizedError('4')
         }
         return updatedToken
     },

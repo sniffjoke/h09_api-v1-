@@ -14,6 +14,10 @@ export class ApiError extends Error {
         return new ApiError(401, 'Пользователь не авторизован', 'login')
     }
 
+    static AnyUnauthorizedError(message: string): ApiError {
+        return new ApiError(401, message, 'Any field')
+    }
+
     static BadRequest(message: string, field: string) {
         return new ApiError(400, message, field);
     }

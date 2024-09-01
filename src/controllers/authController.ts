@@ -62,9 +62,7 @@ export const loginController = async (req: Request, res: Response, next: NextFun
             await deviceCollection.insertOne(deviceData)
             await tokenCollection.insertOne(tokenData)
         }
-        // res.set('user-agent', req.ip)
-        res.cookie('refreshToken', refreshToken.split(';')[0], {httpOnly: true, secure: true})
-        // res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
+        res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
         res.status(200).json({accessToken})
     } catch (e) {
         next(e)
@@ -104,8 +102,8 @@ export const resendEmailController = async (req: Request, res: Response, next: N
 
 export const refreshTokenController = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        // const {refreshToken, accessToken} = await authService.refreshToken(Object.values(req.cookies)[0])
-        const {refreshToken, accessToken} = await authService.refreshToken(req.cookies.refreshToken)
+        const {refreshToken, accessToken} = await authService.refreshToken(Object.values(req.cookies)[0])
+        // const {refreshToken, accessToken} = await authService.refreshToken(req.cookies.refreshToken)
         res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
         res.status(200).json({accessToken})
     } catch (e) {
