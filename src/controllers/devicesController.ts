@@ -14,6 +14,10 @@ export const getDevicesController = async (req: Request<any, any, any, any>, res
     if (!validateToken) {
         return next(ApiError.UnauthorizedError())
     }
+    const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
+    if (!isTokenExists || isTokenExists.blackList) {
+        return next(ApiError.UnauthorizedError())
+    }
     const devices = await deviceCollection.find().toArray()
     const deviceMap = (device: WithId<IDevice>) => ({
         deviceId: device.deviceId,
@@ -45,6 +49,10 @@ export const deleteDeviceByIdController = async (req: Request, res: Response, ne
         if (!validateToken) {
             return next(ApiError.UnauthorizedError())
         }
+        const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
+        if (!isTokenExists || isTokenExists.blackList) {
+            return next(ApiError.UnauthorizedError())
+        }
 
         console.log(validateToken._id)
         const removedToken = await tokenCollection.findOne({deviceId: req.params.id})
@@ -69,6 +77,10 @@ export const deleteAllDevicesExceptCurrentController = async (req: Request, res:
         const token = req.cookies.refreshToken;
         const validateToken: any = tokenService.validateRefreshToken(token)
         if (!validateToken) {
+            return next(ApiError.UnauthorizedError())
+        }
+        const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
+        if (!isTokenExists || isTokenExists.blackList) {
             return next(ApiError.UnauthorizedError())
         }
         await deviceCollection.deleteMany({deviceId: {$ne: validateToken.deviceId}})
