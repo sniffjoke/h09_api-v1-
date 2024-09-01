@@ -27,8 +27,8 @@ export const loginController = async (req: Request, res: Response, next: NextFun
             title: req.headers["user-agent"] as string,
             lastActiveDate: new Date(Date.now()).toISOString(),
         }
-        console.log(deviceData.deviceId)
         const {accessToken, refreshToken} = await authService.loginUser({loginOrEmail, password}, deviceData.deviceId)
+
         const findSession = await deviceCollection.findOne({ip: deviceData.ip, title: deviceData.title})
         if (findSession) {
             await deviceCollection.updateMany(findSession, {
@@ -36,7 +36,6 @@ export const loginController = async (req: Request, res: Response, next: NextFun
                     lastActiveDate: new Date(Date.now()).toISOString(),
                 }
             })
-            console.log(deviceData.deviceId)
         } else {
             await deviceCollection.insertOne(deviceData)
         }
