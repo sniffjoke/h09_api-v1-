@@ -57,7 +57,8 @@ export const deleteDeviceByIdController = async (req: Request, res: Response, ne
         }
         await deviceCollection.deleteOne({deviceId: req.params.id})
         // const updateTokenInfo = await tokensRepository.updateTokenForActivate(token)
-        const updateTokenInfo = await tokenCollection.updateOne({refreshToken: findToken?.refreshToken}, {$set: {blackList: true}})
+        // const updateTokenInfo = await tokenCollection.updateOne({refreshToken: findToken?.refreshToken}, {$set: {blackList: true}})
+        const updateTokenInfo = await tokenCollection.updateMany({deviceId: req.params.id}, {$set: {blackList: true}})
         if (!updateTokenInfo) {
             return  next(ApiError.UnauthorizedError())
         }
