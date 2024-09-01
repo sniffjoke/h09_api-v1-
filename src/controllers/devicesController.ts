@@ -5,7 +5,6 @@ import {IDevice} from "../types/devices.interface";
 import {tokenService} from "../services/token.service";
 import {ApiError} from "../exceptions/api.error";
 import {v4 as uuid} from 'uuid';
-import {tokensRepository} from "../repositories/tokensRepository";
 
 
 export const getDevicesController = async (req: Request<any, any, any, any>, res: Response, next: NextFunction) => {
@@ -51,7 +50,8 @@ export const deleteDeviceByIdController = async (req: Request, res: Response, ne
             return
         }
         await deviceCollection.deleteOne({deviceId: req.params.id})
-        const updateTokenInfo = await tokensRepository.updateTokenForActivate(token)
+        // const updateTokenInfo = await tokensRepository.updateTokenForActivate(token)
+        const updateTokenInfo = await tokenCollection.updateOne({refreshToken: removedToken?.refreshToken}, {$set: {blackList: true}})
         if (!updateTokenInfo) {
             return  next(ApiError.UnauthorizedError())
         }
