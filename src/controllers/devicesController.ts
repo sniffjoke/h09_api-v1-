@@ -45,10 +45,7 @@ export const deleteDeviceByIdController = async (req: Request, res: Response, ne
         if (!validateToken) {
             return next(ApiError.UnauthorizedError())
         }
-        const updateTokenInfo = await tokensRepository.updateTokenForActivate(token)
-        if (!updateTokenInfo) {
-            return  next(ApiError.UnauthorizedError())
-        }
+
         console.log(validateToken._id)
         const removedToken = await tokenCollection.findOne({deviceId: req.params.id})
         console.log(removedToken?.userId)
@@ -57,6 +54,10 @@ export const deleteDeviceByIdController = async (req: Request, res: Response, ne
             return
         }
         await deviceCollection.deleteOne({deviceId: req.params.id})
+        const updateTokenInfo = await tokensRepository.updateTokenForActivate(token)
+        if (!updateTokenInfo) {
+            return  next(ApiError.UnauthorizedError())
+        }
         res.status(204).send('Удалено');
     } catch (e) {
         res.status(500).send(e)
