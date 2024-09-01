@@ -60,7 +60,7 @@ export const authService = {
         const {refreshToken, accessToken} = tokenService.createTokens(isTokenExists.userId, tokenValidate.deviceId)
         const tokenData = {
             userId: isTokenExists.userId,
-            deviceId: tokenValidate.deviceId,
+            deviceId: isTokenExists.deviceId,
             refreshToken,
             blackList: false
         } as RTokenDB
