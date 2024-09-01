@@ -10,7 +10,7 @@ export const tokensRepository = {
     },
 
     async updateTokenForActivate(refreshToken: string) {
-        const updatedToken = await tokenCollection.updateOne({refreshToken}, {$set: {blackList: true}})
+        const updatedToken = await tokenCollection.updateMany({refreshToken}, {$set: {blackList: true}})
         return updatedToken
     },
 
