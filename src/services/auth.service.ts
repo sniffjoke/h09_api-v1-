@@ -36,18 +36,18 @@ export const authService = {
         if (!tokenValidate) {
             throw ApiError.AnyUnauthorizedError('1')
         }
-        const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
-        if (!isTokenExists || isTokenExists.blackList) {
-            throw ApiError.AnyUnauthorizedError('2')
-        }
+        // const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
+        // if (!isTokenExists || isTokenExists.blackList) {
+        //     throw ApiError.AnyUnauthorizedError('2')
+        // }
         const updateTokenInfo = await tokensRepository.updateTokenForActivate(token)
         if (!updateTokenInfo) {
             throw ApiError.AnyUnauthorizedError('3')
         }
-        const {refreshToken, accessToken} = tokenService.createTokens(isTokenExists.userId, tokenValidate.deviceId)
+        const {refreshToken, accessToken} = tokenService.createTokens(tokenValidate.userId, tokenValidate.deviceId)
         const tokenData = {
-            userId: isTokenExists.userId,
-            deviceId: isTokenExists.deviceId,
+            userId: tokenValidate.userId,
+            deviceId: tokenValidate.deviceId,
             refreshToken,
             blackList: false
         } as RTokenDB
@@ -76,10 +76,10 @@ export const authService = {
         if (!tokenVerified) {
             throw ApiError.UnauthorizedError()
         }
-        const tokenFromDb = await tokensRepository.findTokenByRefreshToken(token)
-        if (!tokenFromDb || tokenFromDb.blackList) {
-            throw ApiError.UnauthorizedError()
-        }
+        // const tokenFromDb = await tokensRepository.findTokenByRefreshToken(token)
+        // if (!tokenFromDb || tokenFromDb.blackList) {
+        //     throw ApiError.UnauthorizedError()
+        // }
         // const updatedToken = await tokensRepository.updateTokenForActivate(tokenFromDb.refreshToken)
         const updatedToken = await tokenCollection.updateMany({deviceId: tokenVerified.deviceId}, {$set: {blackList: true}})
         if (!updatedToken) {
