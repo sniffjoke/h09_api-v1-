@@ -95,7 +95,7 @@ export const authService = {
             throw ApiError.UnauthorizedError()
         }
         // const updatedToken = await tokensRepository.updateTokenForActivate(tokenFromDb.refreshToken)
-        const updatedToken = await tokenCollection.updateMany({refreshToken: tokenFromDb.refreshToken}, {$set: {blackList: true}})
+        const updatedToken = await tokenCollection.updateMany({deviceId: tokenVerified.deviceId}, {$set: {blackList: true}})
         if (!updatedToken) {
             throw ApiError.UnauthorizedError()
         }
