@@ -51,7 +51,7 @@ export const loginController = async (req: Request, res: Response, next: NextFun
                 refreshToken,
                 blackList: false,
             })
-            await tokenCollection.updateMany({refreshToken: {$ne: refreshToken}, deviceId: findSession.deviceId}, {$set: {blackList: true}})
+            // await tokenCollection.updateMany({refreshToken: {$ne: refreshToken}, deviceId: findSession.deviceId}, {$set: {blackList: true}})
         } else {
             const tokenData = {
                 userId: user._id.toString(),
