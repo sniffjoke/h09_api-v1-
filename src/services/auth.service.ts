@@ -37,7 +37,6 @@ export const authService = {
             throw ApiError.AnyUnauthorizedError('1')
         }
         const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
-        console.log(isTokenExists)
         if (!isTokenExists || isTokenExists.blackList) {
             throw ApiError.AnyUnauthorizedError(`${isTokenExists?.refreshToken}`)
         }
