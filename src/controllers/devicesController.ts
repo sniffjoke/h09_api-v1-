@@ -5,7 +5,6 @@ import {IDevice} from "../types/devices.interface";
 import {tokenService} from "../services/token.service";
 import {ApiError} from "../exceptions/api.error";
 import {v4 as uuid} from 'uuid';
-import {tokensRepository} from "../repositories/tokensRepository";
 
 
 export const getDevicesController = async (req: Request<any, any, any, any>, res: Response, next: NextFunction) => {
@@ -13,10 +12,6 @@ export const getDevicesController = async (req: Request<any, any, any, any>, res
     const validateToken = tokenService.validateRefreshToken(token)
     if (!validateToken) {
         return next(ApiError.UnauthorizedError())
-    }
-    const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
-    if (!isTokenExists || isTokenExists.blackList) {
-        return next(ApiError.AnyUnauthorizedError(`${isTokenExists?.refreshToken}`))
     }
     const devices = await deviceCollection.find().toArray()
     const deviceMap = (device: WithId<IDevice>) => ({
@@ -49,10 +44,6 @@ export const deleteDeviceByIdController = async (req: Request, res: Response, ne
         if (!validateToken) {
             return next(ApiError.UnauthorizedError())
         }
-        const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
-        if (!isTokenExists || isTokenExists.blackList) {
-            return next(ApiError.AnyUnauthorizedError(`${isTokenExists?.refreshToken}`))
-        }
 
         const findToken = await tokenCollection.findOne({deviceId: req.params.id})
         if (!findToken) {
@@ -83,10 +74,6 @@ export const deleteAllDevicesExceptCurrentController = async (req: Request, res:
         const validateToken: any = tokenService.validateRefreshToken(token)
         if (!validateToken) {
             return next(ApiError.UnauthorizedError())
-        }
-        const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
-        if (!isTokenExists || isTokenExists.blackList) {
-            return next(ApiError.AnyUnauthorizedError(`${isTokenExists?.refreshToken}`))
         }
         await deviceCollection.deleteMany({deviceId: {$ne: validateToken.deviceId}})
         await tokenCollection.updateMany({userId: validateToken._id, deviceId: {$ne: validateToken.deviceId}}, {$set: {blackList: true}})
