@@ -1,20 +1,21 @@
 import {NextFunction, Request, Response} from "express";
 import {ApiError} from "../../exceptions/api.error";
 import {tokenService} from "../../services/token.service";
+import {tokensRepository} from "../../repositories/tokensRepository";
 
-export const authMiddlewareWithCookie = (req: Request, res: Response, next: NextFunction) => {
+export const authMiddlewareWithCookie = async (req: Request, res: Response, next: NextFunction) => {
     let token = req.headers.authorization as string
     if (!token) {
         return next(ApiError.UnauthorizedError())
     }
 
     try {
-        token = token.split(' ')[1]
-        if (token === null || !token) {
+        const tokenValidate: any = tokenService.validateRefreshToken(token)
+        if (!tokenValidate) {
             return next(ApiError.UnauthorizedError())
         }
-        let verifyToken: any = tokenService.validateAccessToken(token)
-        if (!verifyToken) {
+        const isTokenExists = await tokensRepository.findTokenByRefreshToken(token)
+        if (!isTokenExists || isTokenExists.blackList) {
             return next(ApiError.UnauthorizedError())
         }
         next()

@@ -4,7 +4,6 @@ import {WithId} from "mongodb";
 import {IDevice} from "../types/devices.interface";
 import {tokenService} from "../services/token.service";
 import {ApiError} from "../exceptions/api.error";
-import {v4 as uuid} from 'uuid';
 
 
 export const getDevicesController = async (req: Request<any, any, any, any>, res: Response, next: NextFunction) => {
@@ -26,17 +25,6 @@ export const getDevicesController = async (req: Request<any, any, any, any>, res
     res.status(200).json(devicesOutput)
 }
 
-export const createDeviceController = async (req: Request<any, any, any, any>, res: Response) => {
-    const deviceData: IDevice = {
-        ip: req.ip as string,
-        deviceId: uuid(),
-        title: req.headers["user-agent"] as string,
-        lastActiveDate: new Date(Date.now()).toISOString(),
-    }
-    const device = await deviceCollection.insertOne(deviceData)
-    res.status(201).json(device)
-}
-
 export const deleteDeviceByIdController = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const token = req.cookies.refreshToken;
@@ -44,20 +32,15 @@ export const deleteDeviceByIdController = async (req: Request, res: Response, ne
         if (!validateToken) {
             return next(ApiError.UnauthorizedError())
         }
-
         const findToken = await tokenCollection.findOne({deviceId: req.params.id})
         if (!findToken) {
             return next(ApiError.UnauthorizedError())
         }
-
-        // const removedToken = await tokenCollection.findOne({refreshToken: token})
         if (validateToken._id !== findToken?.userId) {
             res.status(403).send('Сессия принадлежит другому пользователю')
             return
         }
         await deviceCollection.deleteOne({deviceId: req.params.id})
-        // const updateTokenInfo = await tokensRepository.updateTokenForActivate(token)
-        // const updateTokenInfo = await tokenCollection.updateOne({refreshToken: findToken?.refreshToken}, {$set: {blackList: true}})
         const updateTokenInfo = await tokenCollection.updateMany({deviceId: req.params.id}, {$set: {blackList: true}})
         if (!updateTokenInfo) {
             return  next(ApiError.UnauthorizedError())
