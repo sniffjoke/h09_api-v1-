@@ -11,6 +11,7 @@ import mailService from "./mail.service";
 import {userService} from "./user.service";
 import {cryptoService} from "./crypto.service";
 import {deviceCollection, tokenCollection} from "../db/mongo-db";
+import ip from "ip";
 
 
 export const authService = {
@@ -53,6 +54,14 @@ export const authService = {
         } as RTokenDB
         const addTokenToDb = await tokensRepository.createToken(tokenData)
         if (!addTokenToDb) {
+            throw ApiError.UnauthorizedError()
+        }
+        const findSessionAndUpdate = await deviceCollection.findOneAndUpdate({userId: isTokenExists.userId, deviceId: isTokenExists.deviceId}, {
+            $set: {
+                lastActiveDate: new Date(Date.now()).toISOString(),
+            }
+        })
+        if (findSessionAndUpdate) {
             throw ApiError.UnauthorizedError()
         }
         return {

@@ -60,7 +60,7 @@ export const deleteAllDevicesExceptCurrentController = async (req: Request, res:
         if (!validateToken) {
             return next(ApiError.UnauthorizedError())
         }
-        await deviceCollection.deleteMany({deviceId: {$ne: validateToken.deviceId}})
+        await deviceCollection.deleteMany({userId: validateToken._id, deviceId: {$ne: validateToken.deviceId}})
         // await deviceCollection.deleteMany({userId: {$ne: validateToken.userId}})
         await tokenCollection.updateMany({userId: validateToken._id, deviceId: {$ne: validateToken.deviceId}}, {$set: {blackList: true}})
         res.status(204).send('Удалено');
