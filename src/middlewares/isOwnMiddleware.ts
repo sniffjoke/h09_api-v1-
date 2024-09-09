@@ -2,7 +2,6 @@ import {NextFunction, Request, Response} from "express";
 import * as jwt from "jsonwebtoken";
 import {SETTINGS} from "../settings";
 import {ObjectId} from "mongodb";
-import {commentsQueryRepository} from "../queryRepositories/commentsQueryRepository";
 import {commentCollection} from "../db/mongo-db";
 
 export const isOwnMiddleware = async (req: Request, res: Response, next: NextFunction) => {
@@ -14,7 +13,6 @@ export const isOwnMiddleware = async (req: Request, res: Response, next: NextFun
     try {
         token = token.split(' ')[1]
         if (token === null || !token) {
-            console.log('token is null')
             res.status(401).send('Нет авторизации')
             return;
         }

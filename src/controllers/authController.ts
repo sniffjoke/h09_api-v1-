@@ -30,15 +30,17 @@ export const loginController = async (req: Request, res: Response, next: NextFun
         }
         const myIp = ip.address()
         const userAgent = req.headers['user-agent'] as string;
-        const findSession = await deviceCollection.findOne({ip: myIp, title: userAgent})
+        // const findSession = await deviceCollection.findOne({ip: myIp, title: userAgent})
+        const findSession = await deviceCollection.findOne({userId: user._id.toString(), ip: myIp, title: userAgent})
         const deviceData: IDevice = {
+            userId: user._id.toString(),
             deviceId: findSession ? findSession.deviceId : uuid(),
+            // deviceId: findSession?.title === userAgent && findSession.ip === myIp ? findSession.deviceId : uuid(),
             ip: myIp,
             title: userAgent,
             lastActiveDate: new Date(Date.now()).toISOString(),
         }
         const {accessToken, refreshToken} = await authService.loginUser({loginOrEmail, password}, deviceData.deviceId)
-
         if (findSession) {
             await deviceCollection.updateOne(findSession, {
                 $set: {

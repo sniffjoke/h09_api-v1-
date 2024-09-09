@@ -4,16 +4,19 @@ import {WithId} from "mongodb";
 import {IDevice} from "../types/devices.interface";
 import {tokenService} from "../services/token.service";
 import {ApiError} from "../exceptions/api.error";
+import {usersRepository} from "../repositories/usersRepository";
 
 
 export const getDevicesController = async (req: Request<any, any, any, any>, res: Response, next: NextFunction) => {
     const token = req.cookies.refreshToken;
-    const validateToken = tokenService.validateRefreshToken(token)
+    const validateToken: any = tokenService.validateRefreshToken(token)
     if (!validateToken) {
         return next(ApiError.UnauthorizedError())
     }
-    const devices = await deviceCollection.find().toArray()
+    const user = await usersRepository.findUserById(validateToken._id)
+    const devices = await deviceCollection.find({userId: user?._id.toString()}).toArray()
     const deviceMap = (device: WithId<IDevice>) => ({
+        userId: device.userId,
         deviceId: device.deviceId,
         ip: device.ip,
         title: device.title,
@@ -58,7 +61,8 @@ export const deleteAllDevicesExceptCurrentController = async (req: Request, res:
         if (!validateToken) {
             return next(ApiError.UnauthorizedError())
         }
-        await deviceCollection.deleteMany({deviceId: {$ne: validateToken.deviceId}})
+        // await deviceCollection.deleteMany({deviceId: {$ne: validateToken.deviceId}})
+        await deviceCollection.deleteMany({userId: {$ne: validateToken.userId}})
         await tokenCollection.updateMany({userId: validateToken._id, deviceId: {$ne: validateToken.deviceId}}, {$set: {blackList: true}})
         res.status(204).send('Удалено');
     } catch (e) {
