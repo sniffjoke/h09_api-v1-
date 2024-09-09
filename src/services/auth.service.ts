@@ -61,7 +61,7 @@ export const authService = {
                 lastActiveDate: new Date(Date.now()).toISOString(),
             }
         })
-        if (findSessionAndUpdate) {
+        if (!findSessionAndUpdate) {
             throw ApiError.UnauthorizedError()
         }
         return {
