@@ -16,7 +16,6 @@ export const getDevicesController = async (req: Request<any, any, any, any>, res
     const user = await usersRepository.findUserById(validateToken._id)
     const devices = await deviceCollection.find({userId: user?._id.toString()}).toArray()
     const deviceMap = (device: WithId<IDevice>) => ({
-        userId: device.userId,
         deviceId: device.deviceId,
         ip: device.ip,
         title: device.title,
